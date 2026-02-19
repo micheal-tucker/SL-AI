@@ -9,20 +9,27 @@ import { ChatInput } from "@/components/chat-input";
 
 const HISTORY_KEY = "slai_chat_history";
 const TONE_KEY = "slai_tone";
+const KB_KEY = "slai_kb_docs";
+const WEB_KEY = "slai_web_search";
 
 export function ChatContainer() {
   const [input, setInput] = useState("");
   const [tone, setTone] = useState("professional");
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
+  const [kbDocs, setKbDocs] = useState<Array<{ title: string; text: string }>>(
+    []
+  );
+  const [kbContext, setKbContext] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status, stop, setMessages, error, regenerate } =
     useChat({
       api: "/api/chat",
-      body: { tone },
-    onError: (err) => {
-      console.log("[v0] Chat error:", err.message);
-    },
-  });
+      body: { tone, webSearch: webSearchEnabled, kbContext },
+      onError: (err) => {
+        console.log("[v0] Chat error:", err.message);
+      },
+    });
 
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -50,6 +57,13 @@ export function ChatContainer() {
     try {
       const storedTone = window.localStorage.getItem(TONE_KEY);
       if (storedTone) setTone(storedTone);
+      const storedWeb = window.localStorage.getItem(WEB_KEY);
+      if (storedWeb) setWebSearchEnabled(storedWeb === "true");
+      const storedKb = window.localStorage.getItem(KB_KEY);
+      if (storedKb) {
+        const parsed = JSON.parse(storedKb);
+        if (Array.isArray(parsed)) setKbDocs(parsed);
+      }
     } catch {
       // ignore
     }
@@ -62,6 +76,22 @@ export function ChatContainer() {
       // ignore
     }
   }, [tone]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(WEB_KEY, webSearchEnabled.toString());
+    } catch {
+      // ignore
+    }
+  }, [webSearchEnabled]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(KB_KEY, JSON.stringify(kbDocs));
+    } catch {
+      // ignore
+    }
+  }, [kbDocs]);
 
   useEffect(() => {
     try {
@@ -89,6 +119,8 @@ export function ChatContainer() {
 
   const handleSubmit = () => {
     if (!input.trim()) return;
+    const context = buildKbContext(input, kbDocs);
+    setKbContext(context);
     sendMessage({ text: input });
     setInput("");
   };
@@ -107,14 +139,26 @@ export function ChatContainer() {
     }
   };
 
+  const handleClearKb = () => {
+    setKbDocs([]);
+    setKbContext("");
+    try {
+      window.localStorage.removeItem(KB_KEY);
+    } catch {
+      // ignore
+    }
+  };
+
   const handleAttach = async (file: File) => {
     if (!file) return;
-    const text = await file.text();
+    const text = await readFileText(file);
     const maxChars = 6000;
     const clipped =
       text.length > maxChars ? text.slice(0, maxChars) + "\n...[truncated]" : text;
+    const doc = { title: file.name, text: clipped };
+    setKbDocs((prev) => [doc, ...prev].slice(0, 20));
     sendMessage({
-      text: `Attached file: ${file.name}\n\n${clipped}`,
+      text: `I added "${file.name}" to my local knowledge base.\n\nHere is a preview:\n${clipped}`,
     });
   };
 

@@ -3,15 +3,24 @@
 import { Bot, RotateCcw } from "lucide-react";
 import { SpeechControls } from "@/components/speech-controls";
 import { ToneControls } from "@/components/tone-controls";
+import { Globe, Database } from "lucide-react";
 
 export function ChatHeader({
   onNewChat,
   tone,
   onToneChange,
+  webSearchEnabled,
+  onToggleWebSearch,
+  kbCount,
+  onClearKb,
 }: {
   onNewChat: () => void;
   tone: string;
   onToneChange: (value: string) => void;
+  webSearchEnabled: boolean;
+  onToggleWebSearch: (value: boolean) => void;
+  kbCount: number;
+  onClearKb: () => void;
 }) {
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
@@ -31,6 +40,26 @@ export function ChatHeader({
       <div className="flex items-center gap-3">
         <SpeechControls />
         <ToneControls value={tone} onChange={onToneChange} />
+        <button
+          type="button"
+          onClick={() => onToggleWebSearch(!webSearchEnabled)}
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary transition-colors"
+          aria-label="Toggle web search"
+        >
+          <Globe className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">
+            Web {webSearchEnabled ? "On" : "Off"}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={onClearKb}
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary transition-colors"
+          aria-label="Clear knowledge base"
+        >
+          <Database className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">KB {kbCount}</span>
+        </button>
         <button
           type="button"
           onClick={onNewChat}

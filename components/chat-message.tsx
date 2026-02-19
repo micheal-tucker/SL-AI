@@ -151,13 +151,17 @@ export function ChatMessage({
       typeof window !== "undefined"
         ? Number(window.localStorage.getItem("slai_voice_rate"))
         : NaN;
-    const defaultRate = preferredLang === "en-GB" ? 0.92 : 0.98;
-    utterance.rate = Number.isFinite(storedRate)
-      ? storedRate
+    const storedPitch =
+      typeof window !== "undefined"
+        ? Number(window.localStorage.getItem("slai_voice_pitch"))
+        : NaN;
+    const defaultRate = preferredLang === "en-GB" ? 0.88 : 0.98;
+    utterance.rate = Number.isFinite(storedRate) ? storedRate : defaultRate;
+    utterance.pitch = Number.isFinite(storedPitch)
+      ? storedPitch
       : preferredLang === "en-GB"
-      ? 0.88
-      : defaultRate;
-    utterance.pitch = preferredLang === "en-GB" ? 0.92 : 1.0;
+      ? 0.92
+      : 1.0;
     utterance.volume = 1.0;
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
