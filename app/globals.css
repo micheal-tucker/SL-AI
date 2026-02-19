@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 150 10% 6%;
+    --foreground: 150 5% 92%;
+    --card: 150 8% 9%;
+    --card-foreground: 150 5% 92%;
+    --popover: 150 8% 9%;
+    --popover-foreground: 150 5% 92%;
+    --primary: 152 60% 48%;
+    --primary-foreground: 150 10% 6%;
+    --secondary: 150 6% 14%;
+    --secondary-foreground: 150 5% 85%;
+    --muted: 150 6% 14%;
+    --muted-foreground: 150 5% 50%;
+    --accent: 207 65% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 6% 16%;
+    --input: 150 6% 18%;
+    --ring: 152 60% 48%;
+    --chart-1: 152 60% 48%;
+    --chart-2: 207 65% 50%;
+    --chart-3: 150 5% 50%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.75rem;
+    --sidebar-background: 150 8% 8%;
+    --sidebar-foreground: 150 5% 92%;
+    --sidebar-primary: 152 60% 48%;
+    --sidebar-primary-foreground: 150 10% 6%;
+    --sidebar-accent: 150 6% 14%;
+    --sidebar-accent-foreground: 150 5% 92%;
+    --sidebar-border: 150 6% 16%;
+    --sidebar-ring: 152 60% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Markdown syntax highlight tweaks */
+pre code {
+  display: block;
+  white-space: pre;
+}
+
+pre code .hljs-comment,
+pre code .hljs-quote {
+  color: hsl(150 5% 55%);
+}
+
+pre code .hljs-keyword,
+pre code .hljs-selector-tag,
+pre code .hljs-literal,
+pre code .hljs-section,
+pre code .hljs-link {
+  color: hsl(207 65% 60%);
+}
+
+pre code .hljs-string,
+pre code .hljs-title,
+pre code .hljs-name,
+pre code .hljs-type,
+pre code .hljs-attribute,
+pre code .hljs-symbol,
+pre code .hljs-bullet,
+pre code .hljs-addition,
+pre code .hljs-variable {
+  color: hsl(152 60% 55%);
+}
+
+pre code .hljs-number,
+pre code .hljs-built_in,
+pre code .hljs-builtin-name,
+pre code .hljs-params {
+  color: hsl(43 74% 66%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(150 8% 9%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(150 6% 20%);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(150 6% 28%);
+}
