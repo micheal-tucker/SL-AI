@@ -85,9 +85,11 @@ export function ChatMessage({
 
   const cleanTextForSpeech = useCallback((value: string) => {
     return value
-      .replace(/[\u{1F300}-\u{1F6FF}]/gu, "")
+      .replace(/[\u2600-\u27BF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g, "")
       .replace(/\*\*(.*?)\*\*/g, "$1")
-      .replace(/`{1,3}.*?`{1,3}/gs, "")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/`{1,3}[\s\S]*?`{1,3}/g, "")
+      .replace(/^\s*[-*•]\s+/gm, "")
       .replace(/\n/g, ". ");
   }, []);
 

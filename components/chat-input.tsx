@@ -45,15 +45,15 @@ export function ChatInput({
   };
 
   return (
-    <div className="sticky bottom-0 border-t border-border bg-card/90 backdrop-blur-sm px-4 py-3">
+    <div className="sticky bottom-0 border-t border-border bg-card/90 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-sm sm:px-4">
       {quickPrompts.length > 0 && (
-        <div className="flex flex-wrap gap-2 max-w-3xl mx-auto mb-2">
+        <div className="mx-auto mb-2 flex max-w-3xl gap-2 overflow-x-auto pb-1">
           {quickPrompts.map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => onQuickPrompt?.(prompt)}
-              className="rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="shrink-0 rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               {prompt}
             </button>
@@ -65,7 +65,7 @@ export function ChatInput({
           e.preventDefault();
           if (input.trim() && !isLoading) onSubmit();
         }}
-        className="flex items-end gap-2 max-w-3xl mx-auto"
+        className="mx-auto flex max-w-3xl items-end gap-2"
       >
         <div className="flex-1 relative">
           <textarea
@@ -86,7 +86,7 @@ export function ChatInput({
           <input
             ref={fileInputRef}
             type="file"
-            accept=".txt,.md"
+            accept=".txt,.md,.pdf"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];

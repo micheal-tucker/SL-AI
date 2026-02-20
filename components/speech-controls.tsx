@@ -67,7 +67,7 @@ export function SpeechControls() {
   if (!canSpeak) return null;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex shrink-0 items-center gap-2">
       <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
         <Volume2 className="h-3.5 w-3.5" />
         Voice
@@ -76,7 +76,7 @@ export function SpeechControls() {
         value={selectedVoice}
         onChange={(e) => setSelectedVoice(e.target.value)}
         className={cn(
-          "h-8 rounded-md border border-border bg-secondary/60 px-2 text-xs",
+          "h-8 min-w-[7.5rem] rounded-md border border-border bg-secondary/60 px-2 text-xs sm:min-w-[10rem]",
           "text-foreground focus:outline-none focus:ring-2 focus:ring-ring/40"
         )}
         aria-label="Select voice"
@@ -108,7 +108,7 @@ export function SpeechControls() {
           }
         }}
         className={cn(
-          "h-8 rounded-md border border-border bg-secondary/60 px-2 text-xs",
+          "h-8 min-w-[7rem] rounded-md border border-border bg-secondary/60 px-2 text-xs sm:min-w-[9rem]",
           "text-foreground focus:outline-none focus:ring-2 focus:ring-ring/40"
         )}
         aria-label="Select voice preset"
@@ -125,7 +125,7 @@ export function SpeechControls() {
         step={0.05}
         value={rate}
         onChange={(e) => setRate(Number(e.target.value))}
-        className="w-20 accent-primary"
+        className="hidden w-20 accent-primary sm:block"
         aria-label="Speech rate"
         title={`Speech rate: ${rate.toFixed(2)}`}
       />
@@ -136,7 +136,7 @@ export function SpeechControls() {
         step={0.05}
         value={pitch}
         onChange={(e) => setPitch(Number(e.target.value))}
-        className="w-20 accent-accent"
+        className="hidden w-20 accent-accent sm:block"
         aria-label="Speech pitch"
         title={`Speech pitch: ${pitch.toFixed(2)}`}
       />

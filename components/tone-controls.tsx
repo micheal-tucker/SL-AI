@@ -12,7 +12,7 @@ export function ToneControls({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={cn(
-        "h-8 rounded-md border border-border bg-secondary/60 px-2 text-xs",
+        "h-8 min-w-[6.5rem] shrink-0 rounded-md border border-border bg-secondary/60 px-2 text-xs",
         "text-foreground focus:outline-none focus:ring-2 focus:ring-ring/40"
       )}
       aria-label="Select tone"

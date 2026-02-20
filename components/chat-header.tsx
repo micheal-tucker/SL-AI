@@ -23,51 +23,61 @@ export function ChatHeader({
   onClearKb: () => void;
 }) {
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/15">
-          <Bot className="w-5 h-5 text-primary" />
+    <header className="sticky top-0 z-10 border-b border-border bg-card/80 px-3 py-3 backdrop-blur-sm sm:px-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15">
+            <Bot className="h-5 w-5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-base font-semibold font-display tracking-tight text-foreground">
+              SL-AI
+            </h1>
+            <p className="truncate text-xs text-muted-foreground">
+              Your Smart Digital Assistant
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-base font-semibold font-display text-foreground tracking-tight">
-            SL-AI
-          </h1>
-          <p className="text-xs text-muted-foreground">
-            Your Smart Digital Assistant
-          </p>
-        </div>
+        <button
+          type="button"
+          onClick={onNewChat}
+          className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:hidden"
+          aria-label="Start new conversation"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          New
+        </button>
       </div>
-      <div className="flex items-center gap-3">
+
+      <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 sm:mt-2 sm:gap-3">
         <SpeechControls />
         <ToneControls value={tone} onChange={onToneChange} />
         <button
           type="button"
           onClick={() => onToggleWebSearch(!webSearchEnabled)}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary transition-colors"
+          className="flex shrink-0 items-center gap-2 rounded-md border border-border/60 bg-secondary/60 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-secondary"
           aria-label="Toggle web search"
         >
-          <Globe className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">
-            Web {webSearchEnabled ? "On" : "Off"}
-          </span>
+          <Globe className="h-3.5 w-3.5" />
+          <span>Web {webSearchEnabled ? "On" : "Off"}</span>
         </button>
         <button
           type="button"
           onClick={onClearKb}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary transition-colors"
+          className="flex shrink-0 items-center gap-2 rounded-md border border-border/60 bg-secondary/60 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-secondary"
           aria-label="Clear knowledge base"
         >
-          <Database className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">KB {kbCount}</span>
+          <Database className="h-3.5 w-3.5" />
+          <span>KB {kbCount}</span>
         </button>
         <button
           type="button"
           onClick={onNewChat}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-secondary transition-colors"
+          className="hidden items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:flex"
           aria-label="Start new conversation"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">New Chat</span>
+          <RotateCcw className="h-3.5 w-3.5" />
+          <span>New Chat</span>
         </button>
       </div>
     </header>

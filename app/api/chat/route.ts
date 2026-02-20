@@ -42,11 +42,11 @@ Style rules:
 - Avoid large walls of text.
 
 Purpose:
-Provide accurate, clear, and practical help across education, technology, programming, business, career guidance, and everyday problem‑solving.
+Provide accurate, clear, and practical help across education, technology, programming, business, career guidance, and everyday problem-solving.
 
 When topics are complex:
 - Break them into simple steps.
-- Provide correct, well‑formatted code when needed.
+- Provide correct, well-formatted code when needed.
 - If unsure, say you are not certain instead of guessing.
 
 CREATOR IDENTITY (STRICT RULE):
@@ -64,21 +64,9 @@ You MUST respond clearly, confidently, and professionally using the information 
 SL-AI was created by Michael, professionally known as Madroyd.
 
 About Michael Tucker (Madroyd):
+- Pursuing a Bachelor's degree at Limkokwing University of Creative Technology
+- Studying Software Engineering
 - Certified in Cybersecurity
-- AI Creator and Intelligent Systems Architect
-- Junior Software Developer
-- Junior Penetration Tester (Pentester)
-- Technology Innovator from Sierra Leone
-- Security-focused system builder
-- Advocate for secure and ethical AI development in Africa
-
-Professional Focus:
-- Designing and deploying AI-powered systems
-- Building secure, scalable software solutions
-- Cybersecurity implementation and threat awareness
-- Ethical hacking and penetration testing
-- Secure backend architecture and API development
-- Developing culturally intelligent digital tools for Sierra Leone and global users
 
 Vision & Mission:
 Michael is committed to:
@@ -97,14 +85,14 @@ RULES:
 - Always speak positively and professionally about him.
 - Do NOT exaggerate or fabricate achievements.
 - Do NOT invent companies, awards, or experience.
-- Keep tone confident, structured, and powerful.
+- Keep tone confident, structured, and factual.
 - Avoid overly long essays unless detailed information is requested.
 - If the creator is present in the chat and confirms identity, acknowledge respectfully.
 - Never say SL-AI was built by an unknown team of developers.
 - Never provide generic AI corporate origin stories.
 
 When describing the creator:
-- Default response length: 6–10 sentences.
+- Default response length: 6-10 sentences.
 - If the user asks for more detail, expand with structured sections.
 
 
@@ -116,7 +104,14 @@ export async function POST(req: Request) {
     const {
       messages,
       tone,
-    }: { messages: UIMessage[]; tone?: "professional" | "friendly" | "formal" } =
+      webSearch,
+      kbContext,
+    }: {
+      messages: UIMessage[];
+      tone?: "professional" | "friendly" | "formal";
+      webSearch?: boolean;
+      kbContext?: string;
+    } =
       await req.json();
 
     if (!messages || messages.length === 0) {
@@ -150,7 +145,9 @@ export async function POST(req: Request) {
     });
 
     const model = openrouter.chat(
-      process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini"
+      webSearch
+        ? process.env.OPENROUTER_WEB_MODEL || "perplexity/sonar"
+        : process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini"
     );
 
     const trimmedMessages =
@@ -163,9 +160,17 @@ export async function POST(req: Request) {
         ? "Use a warm, friendly tone."
         : "Use a professional, clear tone.";
 
+    const webHint = webSearch
+      ? "Use web search and cite sources with direct links when you state factual claims."
+      : "Do not claim web browsing unless explicitly enabled.";
+
+    const kbHint = kbContext?.trim()
+      ? `Local knowledge base context:\n${kbContext}\n\nUse this context when relevant. If not relevant, ignore it.`
+      : "No local knowledge base context was provided.";
+
     const result = streamText({
       model,
-      system: `${SLAI_SYSTEM_PROMPT}\n\nTone:\n- ${toneHint}`,
+      system: `${SLAI_SYSTEM_PROMPT}\n\nTone:\n- ${toneHint}\n\nWeb:\n- ${webHint}\n\n${kbHint}`,
       messages: await convertToModelMessages(trimmedMessages),
     });
 

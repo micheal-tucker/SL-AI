@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { ChatHeader } from "@/components/chat-header";
 import { WelcomeScreen } from "@/components/welcome-screen";
 import { ChatMessage, TypingIndicator } from "@/components/chat-message";
@@ -22,10 +23,18 @@ export function ChatContainer() {
   const [kbContext, setKbContext] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: { tone, webSearch: webSearchEnabled, kbContext },
+      }),
+    [tone, webSearchEnabled, kbContext]
+  );
+
   const { messages, sendMessage, status, stop, setMessages, error, regenerate } =
     useChat({
-      api: "/api/chat",
-      body: { tone, webSearch: webSearchEnabled, kbContext },
+      transport,
       onError: (err) => {
         console.log("[v0] Chat error:", err.message);
       },
@@ -180,7 +189,15 @@ export function ChatContainer() {
 
   return (
     <div className="flex flex-col h-dvh max-h-dvh bg-background">
-      <ChatHeader onNewChat={handleNewChat} tone={tone} onToneChange={setTone} />
+      <ChatHeader
+        onNewChat={handleNewChat}
+        tone={tone}
+        onToneChange={setTone}
+        webSearchEnabled={webSearchEnabled}
+        onToggleWebSearch={setWebSearchEnabled}
+        kbCount={kbDocs.length}
+        onClearKb={handleClearKb}
+      />
 
       <div
         ref={scrollRef}
@@ -223,4 +240,43 @@ export function ChatContainer() {
       />
     </div>
   );
+}
+
+function buildKbContext(
+  input: string,
+  docs: Array<{ title: string; text: string }>
+) {
+  if (!docs.length) return "";
+  const terms = new Set(
+    input
+      .toLowerCase()
+      .split(/[^a-z0-9]+/g)
+      .filter((term) => term.length > 2)
+  );
+
+  const topDocs = docs
+    .map((doc) => {
+      const lower = doc.text.toLowerCase();
+      let score = 0;
+      terms.forEach((term) => {
+        if (lower.includes(term)) score += 1;
+      });
+      return { doc, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(
+      ({ doc }) =>
+        `Title: ${doc.title}\nContent:\n${doc.text.slice(0, 1800)}`
+    );
+
+  return topDocs.join("\n\n---\n\n");
+}
+
+async function readFileText(file: File) {
+  if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+    return "PDF detected. Full text extraction is not available in this build. Convert PDF to .txt or .md for best results.";
+  }
+
+  return file.text();
 }
